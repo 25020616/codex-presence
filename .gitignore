@@ -1,0 +1,18 @@
+# Build outputs and local test data
+build/
+*.exe
+*.pdb
+*.log
+
+# Local application preferences and diagnostics
+presence-settings.json
+presence-settings.json.tmp
+presence-verification.json
+*-receipt.json
+
+# Editor/OS files
+.vs/
+.vscode/
+Thumbs.db
+Desktop.ini
+
