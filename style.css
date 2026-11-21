@@ -8,3 +8,4 @@ dialog{padding:0;border:1px solid #556445;border-radius:12px;background:#191f15;
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 .featured-copy>p,.project-info>p,.hero-aside p{font-size:1rem}.feature-list li{font-size:.875rem}
 .dialog-feedback:empty{display:none}.dialog-feedback{margin:0 24px 24px;padding:12px;border:1px solid var(--line);border-radius:5px;font-size:.875rem;color:var(--accent);overflow-wrap:anywhere}
+.download-meta,.featured-copy .download-meta{font-size:.8125rem}.detail-link{font-size:.875rem}.project-type,.project-meta,.category-tag{font-size:.8125rem}.image-caption{font-size:.75rem}
