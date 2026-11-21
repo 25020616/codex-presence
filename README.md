@@ -8,14 +8,14 @@ Built by Nguyễn Gia Huy. This is an independent personal project, not an offic
 
 ## Download
 
-Visit **[giahuydevtrai.online](https://giahuydevtrai.online/#projects)** for the Windows download. The current distributed build is a portable **Windows x64** executable. Keep it in a writable folder, because preferences are saved next to the application.
+Download the **[Windows x64 ZIP](https://github.com/25020616/codex-presence/releases/download/build-2026.11.20/CodexPresence-Windows-x64.zip)** or browse the **[release and checksums](https://github.com/25020616/codex-presence/releases/tag/build-2026.11.20)**. The project page is at **[giahuydevtrai.online](https://giahuydevtrai.online/codex-presence.html)**. The current distributed build is a portable **Windows x64** executable. Keep it in a writable folder, because preferences are saved next to the application.
 
 The executable does not currently carry an Authenticode publisher signature. No installer, login, Discord token, or API key is required by the utility. The release currently has no embedded semantic version; the accompanying checksum identifies the distributed binary.
 
 ## What it does
 
 - Shows an activity phase such as thinking, writing code, reading, searching, idle, or needing attention.
-- Optionally shows the current model and the latest turn's token/cache figures.
+- Shows the latest turn's token/cache figures and optionally includes the current model.
 - Shows elapsed time for the detected Codex desktop session.
 - Offers animated artwork, static artwork, and a compact token-focused card.
 - Provides a Discord card preview, pause/resume, reconnect, and opt-in launch at Windows sign-in.
