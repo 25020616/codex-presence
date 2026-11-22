@@ -259,6 +259,26 @@
   $('.close-image').addEventListener('click', () => imageDialog.close());
   imageDialog.addEventListener('click', event => backdropClose(imageDialog, event));
 
+  // Animate navigation without relying on browser-specific document transitions.
+  let navigating = false;
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || link.target === '_blank') return;
+    const next = new URL(link.href);
+    if (next.origin !== location.origin || next.pathname === location.pathname) return;
+    event.preventDefault();
+    if (navigating) return;
+    navigating = true;
+    body.classList.add('is-leaving');
+    const delay = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 110;
+    setTimeout(() => location.assign(next.href), delay);
+  });
+  addEventListener('pageshow', () => {
+    navigating = false;
+    body.classList.remove('is-leaving');
+  });
+
   document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault(); openSearch(document.activeElement); return;
