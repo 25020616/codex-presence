@@ -20,3 +20,90 @@ body[data-collapsed=true]{--side:0px}body[data-collapsed=true] .sidebar{width:22
 html{scroll-padding-top:150px}.topbar{position:sticky;top:0;background:var(--canvas)}.project-tabs{position:sticky;top:80px;z-index:20;box-shadow:0 0 0 8px var(--canvas)}.product-view{animation:view-in 240ms var(--ease) both}
 #main{transition:opacity 110ms ease-out,transform 110ms var(--ease)}.is-leaving #main{opacity:0;transform:translateY(-4px)}@media(max-width:760px){.project-tabs{top:69px}}
 @media(prefers-reduced-motion:reduce){.is-leaving #main{transform:none}}
+
+/* Tactile interaction layer: paint/compositing only; layout and palette stay intact. */
+:root {
+  --tactile-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --tactile-return: 200ms;
+  --tactile-hover: 180ms;
+  --tactile-press: 150ms;
+  --tactile-hover-scale: 1.018;
+  --tactile-press-scale: 0.97;
+}
+
+:root body :is(a[href], button:not(.drawer-shade), summary) {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+  filter: brightness(1);
+  will-change: transform;
+  transition-property: transform, filter, box-shadow, background-color, opacity, color, border-color;
+  transition-duration: var(--tactile-return);
+  transition-timing-function: var(--tactile-ease);
+}
+
+/* Fine pointers get hover feedback; touch receives the same press response. */
+@media (hover: hover) and (pointer: fine) {
+  :root body :is(a[href], button:not(.drawer-shade), summary):not(:where(:disabled, [aria-disabled="true"])):hover {
+    transform: translateZ(0) scale(var(--tactile-hover-scale));
+    filter: brightness(1.05);
+    transition-duration: var(--tactile-hover);
+  }
+}
+@media (hover: none) {
+  :root body :is(a[href], button:not(.drawer-shade), summary):hover:not(:active) {
+    transform: translateZ(0);
+    filter: brightness(1);
+  }
+}
+
+:root body :is(a[href], button:not(.drawer-shade), summary):not(:where(:disabled, [aria-disabled="true"])):active {
+  transform: translateZ(0) scale(var(--tactile-press-scale));
+  filter: brightness(0.96);
+  transition-duration: var(--tactile-press);
+}
+
+:root body :is(a[href], button:not(.drawer-shade), summary, input):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px #a8c7fa1a;
+}
+/* Image controls sit in clipped frames, so keep their focus indication inside. */
+:root body :is(button.zoom-trigger, a.showcase-image):focus-visible {
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 4px #a8c7fa1a;
+}
+
+/* Keep text fields editable and prevent nested screenshot effects from compounding. */
+:root body .search-top input {
+  cursor: text;
+  -webkit-user-select: text;
+  user-select: text;
+  transition: box-shadow var(--tactile-return) var(--tactile-ease);
+}
+:root body :is(.showcase-image, .zoom-trigger):hover > img {
+  transform: none;
+  filter: none;
+}
+:root body .drawer-shade {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+:root body :is(a[href], button:not(.drawer-shade), summary):is(:disabled, [aria-disabled="true"]) {
+  cursor: not-allowed;
+  transform: translateZ(0);
+  filter: brightness(1);
+  transition: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root body :is(a[href], button:not(.drawer-shade), summary) {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+}
