@@ -1,0 +1,194 @@
+:root {
+  --spatial-ease: cubic-bezier(.25, 1, .5, 1);
+  --spatial-base: #0b0d13;
+  --spatial-panel: rgba(23, 27, 38, .82);
+  --spatial-glass: rgba(28, 33, 46, .78);
+  --spatial-line: rgba(215, 222, 255, .15);
+  --spatial-shine: rgba(255, 255, 255, .14);
+  --spatial-dot: rgba(182, 197, 246, .09);
+  --spatial-ink: #e8edff;
+  --spatial-depth: 0 8px 24px #05070c49, 0 22px 52px #05070c38;
+}
+
+:root[data-theme="light"] {
+  --spatial-base: #f5f6fa;
+  --spatial-panel: rgba(255, 255, 255, .82);
+  --spatial-glass: rgba(249, 251, 255, .88);
+  --spatial-line: rgba(35, 49, 88, .18);
+  --spatial-shine: rgba(255, 255, 255, .92);
+  --spatial-dot: rgba(43, 63, 110, .12);
+  --spatial-ink: #263259;
+  --spatial-depth: 0 8px 24px #35436916, 0 22px 52px #3543690e;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-surface, body.presence-site {
+  background-color: var(--spatial-base);
+  background-image: radial-gradient(ellipse at 56% 0%, #667bde17, transparent 62%),
+    radial-gradient(circle, var(--spatial-dot) 1px, transparent 1px);
+  background-size: 100% 780px, 20px 20px;
+  background-repeat: no-repeat, repeat;
+}
+
+.topbar, .popover, .search-dialog, .image-dialog, .command-card, .project-row,
+.project-showcase, .contact-card, .download-panel, .download-section:not(body.presence-site *),
+.product-screenshot, .screenshot, .requirements, .toast {
+  background-color: var(--spatial-glass);
+  border-color: var(--spatial-line);
+  box-shadow: inset 0 1px 0 var(--spatial-shine), var(--spatial-depth);
+}
+
+@supports (backdrop-filter: blur(16px)) {
+  .topbar, .popover, .search-dialog, .command-card, .download-panel, .screenshot {
+    backdrop-filter: blur(16px);
+  }
+}
+
+.context-strip, .project-tabs, .project-row-icon, .product-logo {
+  background-color: var(--spatial-panel);
+  border-color: var(--spatial-line);
+}
+
+.command-card:focus-within, .search-dialog:focus-within {
+  border-color: #8c9cf9;
+  box-shadow: inset 0 1px 0 var(--spatial-shine), 0 0 0 3px #8194ff35, var(--spatial-depth);
+}
+
+.platform-label, .build-label, .row-platform, .context-strip, .checksum-heading, .build-caption {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* Only the hovered surface has a light layer. Its gradient moves as a texture. */
+[data-spatial-relative] { position: relative; }
+.spatial-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 210ms var(--spatial-ease);
+}
+.spatial-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 #e0e7ff56, inset 0 0 0 1px #b7c5ff22;
+}
+.spatial-sheen::after {
+  content: "";
+  position: absolute;
+  top: -90px;
+  left: -90px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, #b2c1ff38 0%, #9badff17 39%, transparent 70%);
+  transform: translate3d(var(--mouse-x, 0px), var(--mouse-y, 0px), 0);
+}
+[data-spatial-hover] > .spatial-sheen { opacity: 1; }
+
+:root body :is(a[href], button, summary):not(:where(.drawer-shade, .skip, :disabled, [aria-disabled="true"])) {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 220ms var(--spatial-ease), filter 190ms var(--spatial-ease), opacity 190ms var(--spatial-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root body :is(a[href], button, summary)[data-spatial-anchor]:not(:active):hover {
+    transform: translate3d(var(--magnet-x, 0px), calc(-2px + var(--magnet-y, 0px)), 0) scale(1.02);
+    filter: brightness(1.055);
+  }
+  :root body :is(.button, .project-row, .rail-button, .icon-button, .round-primary)[data-spatial-anchor]:not(:active):hover {
+    filter: brightness(1.055) drop-shadow(0 5px 6px #05070c56);
+  }
+}
+
+:root body :is(a[href], button, summary):not(:where(.drawer-shade, .skip, :disabled, [aria-disabled="true"])):active {
+  transform: translate3d(0, 0, 0) scale(.96);
+  filter: brightness(.95);
+  transition-duration: 180ms;
+}
+
+.spatial-stage { position: relative; }
+.spatial-stickers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+}
+.spatial-sticker {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  transform: translate3d(var(--float-x, 0px), var(--float-y, 0px), 0);
+  pointer-events: none;
+  transition: transform 220ms var(--spatial-ease);
+}
+.sticker-float { display: block; animation: sticker-drift var(--drift) ease-in-out var(--delay) infinite alternate; }
+.sticker-face {
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  min-height: 39px;
+  padding: 7px 11px;
+  border: 1px solid #9cafef66;
+  border-radius: 14px;
+  background: linear-gradient(150deg, #8d9cff24, transparent), var(--spatial-glass);
+  color: var(--spatial-ink);
+  box-shadow: 0 7px 21px #05070c55, inset 0 1px 0 var(--spatial-shine);
+  font: 600 13px/1 ui-monospace, "SF Mono", Consolas, monospace;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transform: rotate(var(--tilt));
+  transition: transform 220ms var(--spatial-ease), filter 200ms var(--spatial-ease);
+}
+.sticker-face:hover {
+  transform: translateY(-4px) rotate(calc(var(--tilt) * -.5)) scale(1.08);
+  filter: brightness(1.15) drop-shadow(0 6px 9px #9da9ff34);
+}
+.sticker-face svg { width: 25px; height: 25px; }
+.sticker-status .sticker-face { display: flex; gap: 7px; border-radius: 999px; font-size: 10px; }
+.sticker-dot { width: 6px; height: 6px; border-radius: 50%; background: #8aa8ff; box-shadow: 0 0 8px #8aa8ff80; }
+.sticker-prism { --tilt: -8deg; --drift: 5.4s; --delay: -1s; left: 10%; top: 2%; }
+.sticker-code { --tilt: 7deg; --drift: 6.7s; --delay: -3s; right: 9%; top: 20%; }
+.sticker-terminal { --tilt: -7deg; --drift: 7.6s; --delay: -2s; left: 5%; top: 62%; }
+.sticker-status { --tilt: -5deg; --drift: 5.9s; --delay: -4s; right: 3%; top: 73%; }
+.sticker-branch { --tilt: 8deg; --drift: 7.2s; --delay: -5s; right: 24%; top: -7%; }
+@keyframes sticker-drift {
+  from { transform: translate3d(0, -3px, 0) rotate(-2deg); }
+  to { transform: translate3d(0, 5px, 0) rotate(2deg); }
+}
+
+@media (min-width: 1180px) and (min-height: 650px) {
+  .welcome .spatial-stickers { display: block; }
+}
+
+/* The product hero is left-aligned, leaving an independent right gutter. */
+@media (min-width: 1180px) and (min-height: 650px) {
+  .presence-site .spatial-stickers { display: block; left: auto; width: 30%; }
+  .presence-site .sticker-prism { left: 34%; top: 3%; }
+  .presence-site .sticker-code { right: 10%; top: 30%; }
+  .presence-site .sticker-terminal { left: 4%; top: 42%; }
+  .presence-site .sticker-status { right: 12%; top: 78%; }
+  .presence-site .sticker-branch { right: 9%; top: -3%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spatial-sticker, .sticker-float, .sticker-face, .sticker-face:hover,
+  :root body :is(a[href], button, summary):not(:where(.drawer-shade, .skip)) {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .spatial-stickers { pointer-events: none; }
+  .sticker-face { pointer-events: none; }
+  .spatial-sheen { display: none; }
+}

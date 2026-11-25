@@ -15,7 +15,7 @@
   const resultBox = $('.search-results');
   const toast = $('.toast');
   const siteRoot = new URL('./', location.href).href;
-  const projectUrl = new URL('codex-presence.html', siteRoot).href;
+  const projectUrl = 'https://25020616.github.io/codex-presence-site/';
   const repo = 'https://github.com/25020616/codex-presence';
   let collapsed = false;
   try {
