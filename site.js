@@ -18,9 +18,10 @@
   const projectUrl = 'https://codexpresence.giahuydevtrai.online/';
   const repo = 'https://github.com/25020616/codex-presence';
   let collapsed = false;
+  document.documentElement.dataset.theme = 'light';
   try {
     collapsed = sessionStorage.getItem('giahuy.sidebarCollapsed') === 'true';
-    if (sessionStorage.getItem('giahuy.theme') === 'light') document.documentElement.dataset.theme = 'light';
+    if (sessionStorage.getItem('giahuy.theme') === 'dark') document.documentElement.dataset.theme = 'dark';
   } catch { /* The workspace still works when browser storage is unavailable. */ }
   let toastTimer;
   let popoverTrigger;

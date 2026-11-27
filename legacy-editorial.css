@@ -1,0 +1,63 @@
+/* The original project URL still hosts its setup, download and FAQ tabs. */
+:root {
+  --canvas: #171813;
+  --rail: #111;
+  --sidebar: #20221a;
+  --surface: #22241c;
+  --raised: #2a2d22;
+  --hover: #323828;
+  --selected: #393f29;
+  --border: #424638;
+  --text: #f3f4ea;
+  --muted: #bec1b0;
+  --quiet: #a5aa96;
+  --ink: #202606;
+  --white: #d9ff3f;
+  --focus: #d9ff3f;
+}
+:root[data-theme="light"] {
+  --canvas: #f6f5f2;
+  --rail: #eeede6;
+  --sidebar: #fbfaf8;
+  --surface: #fff;
+  --raised: #f4f4ed;
+  --hover: #eff1e5;
+  --selected: #e7e9db;
+  --border: #e0e1d5;
+  --text: #181913;
+  --muted: #595e4d;
+  --quiet: #646958;
+  --ink: #202606;
+  --white: #d9ff3f;
+  --focus: #657e12;
+}
+body[data-page="product"] .app-surface { background: var(--canvas); border-color: var(--border); }
+body[data-page="product"] .app-surface::before { display: none; }
+body[data-page="product"] .rail { background: var(--rail); }
+body[data-page="product"] .sidebar { background: var(--sidebar); }
+body[data-page="product"] .topbar { background: color-mix(in srgb, var(--surface) 85%, transparent); }
+body[data-page="product"] :is(.product-screenshot, .download-section, .search-dialog, .image-dialog, .popover) {
+  border-color: var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 24px #1416090b;
+}
+body[data-page="product"] :is(.product-logo, .step-number, .platform-label, .search-result:hover, .search-result[data-active="true"]) { background: var(--raised); }
+body[data-page="product"] .product-title h1 {
+  color: var(--text);
+  letter-spacing: -.055em;
+}
+body[data-page="product"] .button.primary {
+  background: linear-gradient(135deg,#d9ff3f,#b4ee18);
+  color: #202606;
+  border-color: #b0d53373;
+  box-shadow: 0 5px 14px #a9cd2526;
+}
+body[data-page="product"] .project-tabs {
+  background: var(--raised);
+  border-color: var(--border);
+}
+body[data-page="product"] .tab-indicator { background: #111; border-color: #111; }
+body[data-page="product"] .project-tabs > [aria-selected="true"] { color: #fff; }
+body[data-page="product"] :is(.search-top, .search-footer, .platform-label, .checksum) { border-color: var(--border); }
+body[data-page="product"] .spatial-stickers { display: none; }
