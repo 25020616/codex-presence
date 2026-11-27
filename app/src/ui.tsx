@@ -39,7 +39,7 @@ export function PageHeading({ title, emphasis, eyebrow, description, actions }: 
       {eyebrow && <motion.p variants={reduced ? still : rise} className="eyebrow page-eyebrow"><span aria-hidden />{eyebrow}</motion.p>}
       <h1><motion.span variants={reduced ? still : rise}>{title}</motion.span> <motion.em variants={reduced ? still : {
         hidden: rise.hidden, visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: .43, delay: .05, ease } },
-      }}>{emphasis}</motion.em></h1>
+      }}><span className="float-text">{emphasis}</span></motion.em></h1>
       {description && <motion.p className="page-description" variants={reduced ? still : rise}>{description}</motion.p>}
     </div>
     {actions && <motion.div className="toolbar page-actions" variants={reduced ? still : rise}>{actions}</motion.div>}
@@ -54,7 +54,7 @@ export function Tabs<T extends string>({ value, items, onNavigate }: {
   const reduced = useReducedMotion()
   const id = useId()
   return <LayoutGroup id={id}>
-    <nav className="main-nav" aria-label="Điều hướng chính" onPointerLeave={() => setHovered(undefined)}>
+    <nav className="main-nav" aria-label="Main navigation" onPointerLeave={() => setHovered(undefined)}>
       {items.map(item => <motion.a key={item.key} href={item.href} aria-current={item.key === value ? 'page' : undefined} onClick={event => onNavigate(event, item.href)}
         whileTap={reduced ? undefined : { scale: .96 }} onPointerEnter={event => {
           if (event.pointerType !== 'touch') setHovered(item.key)
@@ -86,7 +86,7 @@ export function Modal({ title, children, onClose, className = '' }: { title: str
     onCancel={event => { event.preventDefault(); onClose() }} onClick={event => { if (event.currentTarget === event.target) onClose() }}>
     <motion.div className="dialog-surface" initial={reduced ? false : { opacity: 0, scale: .975, y: 9, filter: 'blur(6px)' }}
       animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .25, ease }}>
-      <div className="dialog-heading"><h2 id={titleId}>{title}</h2><Button variant="icon" onClick={onClose} aria-label="Đóng hộp thoại"><X size={19}/></Button></div>
+      <div className="dialog-heading"><h2 id={titleId}>{title}</h2><Button variant="icon" onClick={onClose} aria-label="Close dialog"><X size={19}/></Button></div>
       {children}
     </motion.div>
   </dialog>, document.body)

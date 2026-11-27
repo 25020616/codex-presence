@@ -47,27 +47,27 @@ function ShortcutMenu() {
   }, [open])
 
   return <div className="pv-shortcut-anchor" ref={anchor}>
-    <Button ref={trigger} variant="icon" aria-label="Mở lối tắt" aria-expanded={open} aria-controls={open ? 'pv-shortcuts' : undefined}
+    <Button ref={trigger} variant="icon" aria-label="Open shortcuts" aria-expanded={open} aria-controls={open ? 'pv-shortcuts' : undefined}
       onClick={() => setOpen(previous => !previous)}><Plus size={19} /></Button>
     <AnimatePresence>
-      {open && <motion.div className="pv-shortcuts" id="pv-shortcuts" aria-label="Lối tắt workspace"
+      {open && <motion.div className="pv-shortcuts" id="pv-shortcuts" aria-label="Workspace shortcuts"
         initial={reduce ? false : { opacity: 0, y: -4, scale: .96, filter: 'blur(6px)' }}
         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }} exit={{ opacity: 0 }}
         transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 430, damping: 31 }}>
-        <p className="pv-eyebrow">Lối tắt workspace</p>
-        <LinkButton variant="quiet" href={setupUrl} onClick={() => setOpen(false)}><Terminal size={16} /> Hướng dẫn cài đặt</LinkButton>
-        <LinkButton variant="quiet" href={repoUrl} target="_blank" rel="noopener" onClick={() => setOpen(false)}><Github size={16} /> Mã nguồn GitHub</LinkButton>
-        <LinkButton variant="quiet" href="./#contact" onClick={() => setOpen(false)}><Mail size={16} /> Kết nối với mình</LinkButton>
+        <p className="pv-eyebrow">Workspace shortcuts</p>
+        <LinkButton variant="quiet" href={setupUrl} onClick={() => setOpen(false)}><Terminal size={16} /> Setup guide</LinkButton>
+        <LinkButton variant="quiet" href={repoUrl} target="_blank" rel="noopener" onClick={() => setOpen(false)}><Github size={16} /> GitHub source</LinkButton>
+        <LinkButton variant="quiet" href="./#contact" onClick={() => setOpen(false)}><Mail size={16} /> Get in touch</LinkButton>
       </motion.div>}
     </AnimatePresence>
   </div>
 }
 
 const workspaceFacts = [
-  { label: 'Dự án của mình', value: '01', note: 'Codex Presence', Icon: FolderCode, href: './#projects', spotlight: true },
-  { label: 'Nền tảng', value: 'Windows', note: 'Phiên bản x64', Icon: Monitor, href: downloadUrl },
-  { label: 'Công nghệ', value: 'C#', note: 'Ứng dụng WinForms', Icon: Braces, href: './#about' },
-  { label: 'Mã nguồn', value: 'GitHub', note: '25020616 / codex-presence', Icon: GitFork, href: repoUrl, external: true },
+  { label: 'My projects', value: '01', note: 'Codex Presence', Icon: FolderCode, href: './#projects', spotlight: true },
+  { label: 'Platform', value: 'Windows', note: 'x64 build', Icon: Monitor, href: downloadUrl },
+  { label: 'Technology', value: 'C#', note: 'WinForms desktop app', Icon: Braces, href: './#about' },
+  { label: 'Source code', value: 'GitHub', note: '25020616 / codex-presence', Icon: GitFork, href: repoUrl, external: true },
 ] as const
 
 type Fact = { label: string; value: string; note: string; Icon: LucideIcon; href: string; spotlight?: boolean; external?: boolean }
@@ -85,53 +85,53 @@ function FactCard({ fact }: { fact: Fact }) {
 
 function ProjectImage({ onZoom, className = '' }: { onZoom: () => void; className?: string }) {
   return <div className={'pv-image ' + className}>
-    <LinkButton variant="quiet" className="pv-image-link" href={productUrl} aria-label="Xem dự án Codex Presence">
-      <img src={previewImage} alt="Ảnh giao diện Codex Presence" width="962" height="652" />
+    <LinkButton variant="quiet" className="pv-image-link" href={productUrl} aria-label="View Codex Presence">
+      <img src={previewImage} alt="Screenshot of Codex Presence" width="962" height="652" />
     </LinkButton>
-    <Button variant="icon" className="pv-zoom" aria-label="Phóng lớn ảnh Codex Presence" title="Phóng lớn ảnh" onClick={onZoom}><ZoomIn size={17} /></Button>
+    <Button variant="icon" className="pv-zoom" aria-label="Enlarge the Codex Presence screenshot" title="Enlarge screenshot" onClick={onZoom}><ZoomIn size={17} /></Button>
   </div>
 }
 
 function Home({ onSearch, onZoom }: Pick<PortfolioProps, 'onSearch' | 'onZoom'>) {
   return <>
-    <PageHeading title="Bạn muốn" emphasis="khám phá gì?" eyebrow="Gia Huy / Developer"
-      description="Mình làm phần mềm. Đây là nơi mình chia sẻ chúng."
+    <PageHeading title="What would you like" emphasis="to explore?" eyebrow="Gia Huy / Developer"
+      description="I build software and share my projects here."
       actions={<>
-        <LinkButton variant="secondary" href="./#projects"><FolderCode size={16} /> Dự án của mình</LinkButton>
-        <LinkButton variant="primary" href={downloadUrl}><ArrowDownToLine size={16} /> Tải cho Windows</LinkButton>
+        <LinkButton variant="secondary" href="./#projects"><FolderCode size={16} /> My projects</LinkButton>
+        <LinkButton variant="primary" href={downloadUrl}><ArrowDownToLine size={16} /> Download for Windows</LinkButton>
       </>} />
-    <RevealRow className="pv-facts" aria-label="Thông tin workspace">
+    <RevealRow className="pv-facts" aria-label="Workspace at a glance">
       {workspaceFacts.map(fact => <FactCard key={fact.label} fact={fact} />)}
     </RevealRow>
     <RevealRow className="pv-home-row">
       <Card className="pv-featured">
         <div className="pv-feature-body">
-          <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Dự án nổi bật</span></div>
+          <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Featured project</span></div>
           <div className="pv-feature-title">
             <span className="pv-feature-mark"><Terminal size={22} strokeWidth={1.8} /></span>
-            <h2>Codex <em>Presence</em></h2>
+            <h2>Codex <em className="float-text float-secondary">Presence</em></h2>
           </div>
-          <p>Hoạt động Codex. Hiển thị trên Discord.</p>
-          <LinkButton variant="quiet" className="pv-feature-link" href={productUrl}>Khám phá Codex Presence <ArrowUpRight size={16} /></LinkButton>
+          <p>Show your Codex activity on Discord.</p>
+          <LinkButton variant="quiet" className="pv-feature-link" href={productUrl}>Explore Codex Presence <ArrowUpRight size={16} /></LinkButton>
         </div>
         <ProjectImage onZoom={onZoom} className="pv-feature-image" />
       </Card>
       <Card className="pv-command">
-        <div className="pv-panel-top"><span className="pv-index">#02</span><span className="pv-eyebrow">Điều hướng nhanh</span></div>
+        <div className="pv-panel-top"><span className="pv-index">#02</span><span className="pv-eyebrow">Quick navigation</span></div>
         <div className="pv-command-title"><FolderCode size={19} /><h2>gia-huy <em>/ personal</em></h2></div>
         <Button variant="quiet" className="pv-search-field" onClick={onSearch}>
-          <Search size={17} /><span>Tìm dự án, bản tải, hướng dẫn…</span><kbd>Ctrl K</kbd>
+          <Search size={17} /><span>Search projects, downloads, and guides…</span><kbd>Ctrl K</kbd>
         </Button>
         <div className="pv-command-bottom">
-          <div className="pv-shortcut"><ShortcutMenu /><span>Tìm trong website</span></div>
+          <div className="pv-shortcut"><ShortcutMenu /><span>Search the site</span></div>
           <LinkButton variant="quiet" className="pv-context-project" href={productUrl}>Codex Presence <ArrowUpRight size={14} /></LinkButton>
         </div>
       </Card>
     </RevealRow>
-    <RevealRow className="pv-resource-row" aria-label="Lối tắt dự án">
-      <ResourceCard icon={Github} label="Xem mã nguồn" detail="25020616 / codex-presence" href={repoUrl} external />
-      <ResourceCard icon={Terminal} label="Hướng dẫn cài đặt" detail="Tải, giải nén và kết nối với Discord" href={setupUrl} />
-      <ResourceCard icon={UserRound} label="Về Gia Huy" detail="Một chút về người làm ra workspace này" href="./#about" />
+    <RevealRow className="pv-resource-row" aria-label="Project shortcuts">
+      <ResourceCard icon={Github} label="View source on GitHub" detail="25020616 / codex-presence" href={repoUrl} external />
+      <ResourceCard icon={Terminal} label="Setup guide" detail="Download, extract, and connect to Discord" href={setupUrl} />
+      <ResourceCard icon={UserRound} label="About Gia Huy" detail="Meet the developer behind this workspace" href="./#about" />
     </RevealRow>
   </>
 }
@@ -146,29 +146,29 @@ function ResourceCard({ icon: Icon, label, detail, href, external }: { icon: Luc
 
 function Projects({ onZoom }: Pick<PortfolioProps, 'onZoom'>) {
   return <>
-    <PageHeading title="Những thứ" emphasis="mình xây." eyebrow="Dự án"
-      description="Từ một nhu cầu nhỏ, đến một ứng dụng có thể dùng mỗi ngày."
-      actions={<><LinkButton variant="secondary" href={repoUrl} target="_blank" rel="noopener"><Github size={17} /> Mã nguồn</LinkButton><LinkButton variant="primary" href={downloadUrl}><ArrowDownToLine size={16} /> Tải cho Windows</LinkButton></>} />
+    <PageHeading title="Things" emphasis="I build." eyebrow="Projects"
+      description="Small ideas turned into tools you can use every day."
+      actions={<><LinkButton variant="secondary" href={repoUrl} target="_blank" rel="noopener"><Github size={17} /> Source code</LinkButton><LinkButton variant="primary" href={downloadUrl}><ArrowDownToLine size={16} /> Download for Windows</LinkButton></>} />
     <RevealRow className="pv-project-grid">
       <Card className="pv-project-view">
-        <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Ứng dụng desktop</span></div>
+        <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Desktop application</span></div>
         <div className="pv-project-heading">
           <span className="pv-project-mark"><Terminal size={26} /></span>
           <div><h2>Codex Presence</h2><p>C# · WinForms · Windows x64</p></div>
-          <LinkButton variant="icon" className="pv-project-corner" href={productUrl} aria-label="Mở Codex Presence"><ArrowUpRight size={17} /></LinkButton>
+          <LinkButton variant="icon" className="pv-project-corner" href={productUrl} aria-label="Open Codex Presence"><ArrowUpRight size={17} /></LinkButton>
         </div>
         <ProjectImage onZoom={onZoom} />
-        <div className="pv-project-footer"><p>Chia sẻ hoạt động Codex desktop lên Discord. Có xem trước, tùy chỉnh model và tạm dừng.</p><LinkButton variant="primary" href={productUrl}>Khám phá dự án <ArrowRight size={16} /></LinkButton></div>
+        <div className="pv-project-footer"><p>Share Codex desktop activity on Discord. Preview your status, choose which model details to show, and pause sharing anytime.</p><LinkButton variant="primary" href={productUrl}>Explore project <ArrowRight size={16} /></LinkButton></div>
       </Card>
       <Card className="pv-project-details">
-        <div className="pv-panel-top"><span className="pv-index">#02</span><span className="pv-eyebrow">Thông tin bản tải</span></div>
+        <div className="pv-panel-top"><span className="pv-index">#02</span><span className="pv-eyebrow">Release details</span></div>
         <h2>Codex desktop <em>× Discord</em></h2>
         <dl>
-          <div><dt><Monitor size={16} /> Nền tảng</dt><dd>Windows x64</dd></div>
-          <div><dt><CalendarDays size={16} /> Ngày phát hành</dt><dd><time dateTime="2026-11-20">20/11/2026</time></dd></div>
-          <div><dt><FolderCode size={16} /> Định dạng</dt><dd>ZIP portable</dd></div>
+          <div><dt><Monitor size={16} /> Platform</dt><dd>Windows x64</dd></div>
+          <div><dt><CalendarDays size={16} /> Release date</dt><dd><time dateTime="2026-11-20">Nov 20, 2026</time></dd></div>
+          <div><dt><FolderCode size={16} /> Format</dt><dd>Portable ZIP</dd></div>
         </dl>
-        <LinkButton variant="secondary" href={setupUrl}>Hướng dẫn cài đặt <ArrowUpRight size={15} /></LinkButton>
+        <LinkButton variant="secondary" href={setupUrl}>Setup guide <ArrowUpRight size={15} /></LinkButton>
       </Card>
     </RevealRow>
   </>
@@ -176,19 +176,19 @@ function Projects({ onZoom }: Pick<PortfolioProps, 'onZoom'>) {
 
 function About() {
   return <>
-    <PageHeading title="Chào, mình là" emphasis="Gia Huy." eyebrow="Một chút về mình"
-      description="Mình thích bắt đầu từ một nhu cầu nhỏ, rồi làm ra thứ có thể mở lên và sử dụng."
-      actions={<><LinkButton variant="secondary" href={profileUrl} target="_blank" rel="noopener"><Github size={17} /> GitHub của mình</LinkButton><LinkButton variant="primary" href="./#contact"><Mail size={16} /> Cùng trao đổi</LinkButton></>} />
+    <PageHeading title="Hi, I’m" emphasis="Gia Huy." eyebrow="About me"
+      description="I like turning small, practical problems into tools you can open and use."
+      actions={<><LinkButton variant="secondary" href={profileUrl} target="_blank" rel="noopener"><Github size={17} /> My GitHub</LinkButton><LinkButton variant="primary" href="./#contact"><Mail size={16} /> Get in touch</LinkButton></>} />
     <RevealRow className="pv-about-grid">
       <Card className="pv-about-bio">
-        <div className="pv-about-avatar" aria-hidden>GH</div>
+        <div className="pv-about-avatar float-text float-secondary" aria-hidden>GH</div>
         <h2>Nguyễn Gia Huy</h2>
-        <p>Mình là Nguyễn Gia Huy. Mình viết phần mềm, mày mò giao diện và quan tâm đến những chi tiết khiến công việc mỗi ngày dễ chịu hơn.</p>
-        <p>Codex Presence là một trong những công cụ mình xây dựng: kết nối hoạt động Codex desktop với Discord, gọn gàng và đủ dùng.</p>
+        <p>I’m Nguyễn Gia Huy. I write software, experiment with interfaces, and care about the details that make everyday work easier.</p>
+        <p>I built Codex Presence to share Codex desktop activity on Discord with a simple set of controls.</p>
       </Card>
       <Card className="pv-about-tools">
-        <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Bộ công cụ</span></div>
-        <h2>Những công cụ <em>mình dùng</em></h2>
+        <div className="pv-panel-top"><span className="pv-index">#01</span><span className="pv-eyebrow">Toolkit</span></div>
+        <h2>Tools <em>I use</em></h2>
         <ul>{toolset.map(tool => <li key={tool}>{tool}</li>)}</ul>
       </Card>
     </RevealRow>
@@ -197,18 +197,18 @@ function About() {
 
 function Contact({ onCopy }: Pick<PortfolioProps, 'onCopy'>) {
   return <>
-    <PageHeading title="Bắt đầu bằng" emphasis="một lời chào." eyebrow="Liên hệ"
-      description="Góp ý cho một dự án, cùng làm một công cụ, hoặc đơn giản là kết nối." />
+    <PageHeading title="Start with" emphasis="a hello." eyebrow="Contact"
+      description="Send feedback, talk about building something together, or just say hello." />
     <RevealRow className="pv-contact-grid">
       <Card className="pv-contact-card">
-        <div className="pv-panel-top"><span className="pv-mark"><Mail size={18} /></span><span className="pv-eyebrow">Email của mình</span></div>
+        <div className="pv-panel-top"><span className="pv-mark"><Mail size={18} /></span><span className="pv-eyebrow">My email</span></div>
         <a className="pv-email" href={'mailto:' + email}>{email}</a>
         <div className="pv-contact-actions">
-          <LinkButton variant="primary" href={'mailto:' + email}><Mail size={17} /> Viết email</LinkButton>
-          <Button variant="secondary" onClick={() => void onCopy(email, 'email')}><Copy size={17} /> Sao chép</Button>
+          <LinkButton variant="primary" href={'mailto:' + email}><Mail size={17} /> Send an email</LinkButton>
+          <Button variant="secondary" onClick={() => void onCopy(email, 'email')}><Copy size={17} /> Copy</Button>
         </div>
       </Card>
-      <ResourceCard icon={Github} label="Hoặc ghé GitHub / 25020616" detail="Hồ sơ và mã nguồn công khai" href={profileUrl} external />
+      <ResourceCard icon={Github} label="Find me on GitHub / 25020616" detail="Profile and public repositories" href={profileUrl} external />
     </RevealRow>
   </>
 }

@@ -1,63 +1,129 @@
-/* The original project URL still hosts its setup, download and FAQ tabs. */
+/* The compatibility page shares the portfolio palette while keeping its original tabs. */
 :root {
-  --canvas: #171813;
-  --rail: #111;
-  --sidebar: #20221a;
-  --surface: #22241c;
-  --raised: #2a2d22;
-  --hover: #323828;
-  --selected: #393f29;
-  --border: #424638;
-  --text: #f3f4ea;
-  --muted: #bec1b0;
-  --quiet: #a5aa96;
-  --ink: #202606;
-  --white: #d9ff3f;
-  --focus: #d9ff3f;
+  color-scheme: dark;
+  --canvas: #090f1c;
+  --rail: #080d17;
+  --sidebar: #0e1728;
+  --surface: #111d31;
+  --raised: #17253d;
+  --hover: #1d2d47;
+  --selected: #233657;
+  --border: #283a57;
+  --text: #eef4ff;
+  --muted: #a9b9d3;
+  --quiet: #8fa2c2;
+  --ink: #0b1527;
+  --white: #b3d1ff;
+  --focus: #99c5ff;
+  --accent: #a5caff;
+  --glass: #122039da;
+  --chrome: #111c30df;
+  --highlight: #e2eeff22;
+  --hairline: #b9d5ff26;
+  --focus-halo: #8cbdff42;
+  --ambient: #4d7ed133;
+  --dot: #adcaff24;
+  --sheen: #9bcbff2b;
+  --rim-light: #b3d9ff94;
+  --float-color: #9ac7ff;
+  --keycap: #aecfff17;
+  --legacy-shadow: 0 8px 26px #02071348, 0 26px 67px #02071350;
 }
 :root[data-theme="light"] {
-  --canvas: #f6f5f2;
-  --rail: #eeede6;
-  --sidebar: #fbfaf8;
-  --surface: #fff;
-  --raised: #f4f4ed;
-  --hover: #eff1e5;
-  --selected: #e7e9db;
-  --border: #e0e1d5;
-  --text: #181913;
-  --muted: #595e4d;
-  --quiet: #646958;
-  --ink: #202606;
-  --white: #d9ff3f;
-  --focus: #657e12;
+  color-scheme: light;
+  --canvas: #eef3fa;
+  --rail: #e5edf8;
+  --sidebar: #f2f6fc;
+  --surface: #fbfdff;
+  --raised: #eaf0fa;
+  --hover: #e0eaf8;
+  --selected: #d4e4f9;
+  --border: #d0ddee;
+  --text: #15243a;
+  --muted: #465d7c;
+  --quiet: #52698a;
+  --ink: #102544;
+  --white: #b7d3fa;
+  --focus: #315f9a;
+  --accent: #2e5f9e;
+  --glass: #f8fbffdc;
+  --chrome: #f8fbffde;
+  --highlight: #fff;
+  --hairline: #2f598632;
+  --focus-halo: #86b4ef4e;
+  --ambient: #7ba7e639;
+  --dot: #416ca92e;
+  --sheen: #518ae62a;
+  --rim-light: #5993dc85;
+  --float-color: #315f9a;
+  --keycap: #537cb51d;
+  --legacy-shadow: 0 5px 20px #1a44731a, 0 22px 54px #14376417;
 }
-body[data-page="product"] .app-surface { background: var(--canvas); border-color: var(--border); }
-body[data-page="product"] .app-surface::before { display: none; }
+body[data-page="product"] .app-surface {
+  background: radial-gradient(ellipse 72% 550px at 50% -10%, var(--ambient), transparent 92%), var(--canvas);
+  border-color: var(--border);
+}
 body[data-page="product"] .rail { background: var(--rail); }
 body[data-page="product"] .sidebar { background: var(--sidebar); }
-body[data-page="product"] .topbar { background: color-mix(in srgb, var(--surface) 85%, transparent); }
+body[data-page="product"] .topbar { background: var(--chrome); }
 body[data-page="product"] :is(.product-screenshot, .download-section, .search-dialog, .image-dialog, .popover) {
   border-color: var(--border);
   border-radius: 20px;
   background: var(--surface);
-  box-shadow: 0 4px 24px #1416090b;
+  box-shadow: inset 0 1px 0 var(--highlight), var(--legacy-shadow);
 }
 body[data-page="product"] :is(.product-logo, .step-number, .platform-label, .search-result:hover, .search-result[data-active="true"]) { background: var(--raised); }
 body[data-page="product"] .product-title h1 {
+  width: fit-content;
   color: var(--text);
   letter-spacing: -.055em;
 }
+body[data-page="product"] .product-title p { color: var(--muted); }
 body[data-page="product"] .button.primary {
-  background: linear-gradient(135deg,#d9ff3f,#b4ee18);
-  color: #202606;
-  border-color: #b0d53373;
-  box-shadow: 0 5px 14px #a9cd2526;
+  background: linear-gradient(135deg, #d5e7ff, #a9ccff);
+  color: #0b1831;
+  border-color: #bed8fe85;
+  box-shadow: 0 5px 14px #8dbaff33;
 }
 body[data-page="product"] .project-tabs {
   background: var(--raised);
   border-color: var(--border);
 }
-body[data-page="product"] .tab-indicator { background: #111; border-color: #111; }
+body[data-page="product"] .tab-indicator {
+  background: #081220;
+  border-color: #91b7f044;
+  box-shadow: inset 0 1px 0 #c3dcff1f;
+}
 body[data-page="product"] .project-tabs > [aria-selected="true"] { color: #fff; }
 body[data-page="product"] :is(.search-top, .search-footer, .platform-label, .checksum) { border-color: var(--border); }
 body[data-page="product"] .spatial-stickers { display: none; }
+
+.legacy-language { display: flex; flex: 0 0 auto; }
+.legacy-language select {
+  min-height: 36px;
+  max-inline-size: 94px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 5px 7px;
+  background: var(--raised);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+.local-copy:not(.sr-only) { display: contents; }
+.app-footer > .local-copy { padding: 0; }
+.fallback-nav { background: var(--sidebar) !important; color: var(--text) !important; }
+
+@keyframes legacy-tide {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-.12deg); }
+  44% { transform: translate3d(0, -3px, 0) rotate(.14deg); }
+  74% { transform: translate3d(0, 1px, 0) rotate(-.08deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body[data-page="product"] .product-title h1 { animation: legacy-tide 6.8s ease-in-out infinite; }
+}
+@media (max-width: 540px) {
+  body[data-page="product"] .topbar, body[data-page="product"] .header-actions { gap: 5px; }
+  .legacy-language select { min-height: 34px; max-inline-size: 82px; }
+}

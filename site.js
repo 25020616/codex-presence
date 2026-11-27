@@ -18,17 +18,65 @@
   const projectUrl = 'https://codexpresence.giahuydevtrai.online/';
   const repo = 'https://github.com/25020616/codex-presence';
   let collapsed = false;
-  document.documentElement.dataset.theme = 'light';
+  const themeKey = 'giahuy.theme.v3';
+  document.documentElement.dataset.theme = 'dark';
   try {
     collapsed = sessionStorage.getItem('giahuy.sidebarCollapsed') === 'true';
-    if (sessionStorage.getItem('giahuy.theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+    if (sessionStorage.getItem(themeKey) === 'light') document.documentElement.dataset.theme = 'light';
   } catch { /* The workspace still works when browser storage is unavailable. */ }
   let toastTimer;
   let popoverTrigger;
   let searchTrigger;
   let resultIndex = 0;
   let results = [];
-  let lastView;
+  const languageKey = 'codex-presence.language';
+  const languageSelect = $('#presence-language');
+  const localized = $$('[data-vi]').map(element => ({
+    element, english: element.textContent, vietnamese: element.dataset.vi
+  }));
+  const localizedAttributes = ['aria-label', 'title', 'alt', 'placeholder', 'content'].flatMap(attribute =>
+    $$('[data-vi-' + attribute + ']').map(element => ({
+      element, attribute, english: element.getAttribute(attribute), vietnamese: element.getAttribute('data-vi-' + attribute)
+    }))
+  );
+  let language = readLanguage();
+  const t = (english, vietnamese) => language === 'vi' ? vietnamese : english;
+
+  function readLanguage() {
+    const requested = new URLSearchParams(location.search).get('lang');
+    if (requested === 'vi' || requested === 'en') return requested;
+    try {
+      if (localStorage.getItem(languageKey) === 'vi') return 'vi';
+    } catch {
+      // Query links and the selector still work when storage is disabled.
+    }
+    return 'en';
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = language;
+    languageSelect.value = language;
+    for (const item of localized) item.element.textContent = t(item.english, item.vietnamese);
+    for (const item of localizedAttributes) item.element.setAttribute(item.attribute, t(item.english, item.vietnamese));
+    try { localStorage.setItem(languageKey, language); } catch {}
+  }
+
+  function refreshLanguage() {
+    applyLanguage();
+    syncSidebar();
+    updateThemeControl();
+    positionTabIndicator();
+    if (searchDialog.open) renderResults();
+  }
+
+  languageSelect.addEventListener('change', () => {
+    language = languageSelect.value;
+    const url = new URL(location.href);
+    url.searchParams.set('lang', language);
+    history.replaceState(history.state, '', url);
+    refreshLanguage();
+  });
+  applyLanguage();
 
   function message(text) {
     clearTimeout(toastTimer);
@@ -47,8 +95,10 @@
     shade.hidden = !open;
     const expanded = mobile.matches ? open : !collapsed;
     toggle.setAttribute('aria-expanded', String(expanded));
-    toggle.setAttribute('aria-label', mobile.matches ? (open ? 'Đóng thanh bên' : 'Mở thanh bên') : (expanded ? 'Thu gọn thanh bên' : 'Mở rộng thanh bên'));
-    $('.sidebar-close').setAttribute('aria-label', mobile.matches ? 'Đóng thanh bên' : 'Thu gọn thanh bên');
+    const closeLabel = t('Close sidebar', 'Đóng thanh bên');
+    const collapseLabel = t('Collapse sidebar', 'Thu gọn thanh bên');
+    toggle.setAttribute('aria-label', mobile.matches ? (open ? closeLabel : t('Open sidebar', 'Mở thanh bên')) : (expanded ? collapseLabel : t('Expand sidebar', 'Mở rộng thanh bên')));
+    $('.sidebar-close').setAttribute('aria-label', mobile.matches ? closeLabel : collapseLabel);
     if (returnFocus) toggle.focus();
   }
   toggle.addEventListener('click', () => {
@@ -93,22 +143,6 @@
     if (!event.target.closest('.popover-anchor')) closePopovers();
   });
 
-  function currentView() {
-    if (body.dataset.page === 'product') return;
-    const hash = location.hash.slice(1);
-    const key = ['projects', 'about', 'contact'].includes(hash) ? hash : 'home';
-    $$('.view').forEach(view => { view.hidden = view.dataset.view !== key; });
-    $$('[data-view-link]').forEach(link => {
-      if (link.dataset.viewLink === key) link.setAttribute('aria-current', 'page');
-      else link.removeAttribute('aria-current');
-    });
-    document.title = (key === 'home' ? 'Gia Huy' : ({projects:'Dự án', about:'Về Gia Huy', contact:'Liên hệ'}[key]) + ' — Gia Huy') + ' · Personal workspace';
-    if (lastView && lastView !== key) {
-      window.scrollTo({top:0, behavior:'instant'});
-      $('#main').focus({preventScroll:true});
-    }
-    lastView = key;
-  }
   function positionTabIndicator() {
     const tabs = $('.project-tabs');
     if (!tabs) return;
@@ -118,7 +152,6 @@
     marker.style.transform = `translateX(${active.offsetLeft - 4}px)`;
   }
   function currentTab() {
-    if (body.dataset.page !== 'product') return;
     const key = ['setup', 'download'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'overview';
     $$('[data-tab]').forEach(button => {
       const selected = button.dataset.tab === key;
@@ -131,7 +164,9 @@
   $$('[data-tab]').forEach(button => {
     button.addEventListener('click', () => {
       if (button.getAttribute('aria-selected') === 'true') return;
-      history.pushState({}, '', button.dataset.tab === 'overview' ? location.pathname : '#' + button.dataset.tab);
+      const url = new URL(location.href);
+      url.hash = button.dataset.tab === 'overview' ? '' : button.dataset.tab;
+      history.pushState({}, '', url);
       currentTab();
     });
     button.addEventListener('keydown', event => {
@@ -146,16 +181,23 @@
       tabs[index].click(); tabs[index].focus();
     });
   });
-  addEventListener('hashchange', () => { currentView(); currentTab(); });
-  addEventListener('popstate', () => { currentView(); currentTab(); });
+  addEventListener('hashchange', currentTab);
+  addEventListener('popstate', () => {
+    currentTab();
+    const next = readLanguage();
+    if (next !== language) {
+      language = next;
+      refreshLanguage();
+    }
+  });
   addEventListener('resize', positionTabIndicator);
-  currentView(); currentTab();
-  if (body.dataset.page === 'product') $('.rail [data-view-link="projects"]').setAttribute('aria-current', 'location');
+  currentTab();
+  $('.rail [data-view-link="projects"]').setAttribute('aria-current', 'location');
 
   async function copy(text, label, button) {
     try {
       await navigator.clipboard.writeText(text);
-      message(`Đã sao chép ${label}`);
+      message(t(`Copied ${label}`, `Đã sao chép ${label}`));
       if (button) {
         const icon = button.querySelector('.icon');
         if (icon && !button.dataset.copyBusy) {
@@ -166,44 +208,53 @@
         }
       }
     } catch {
-      message(`Chưa thể sao chép. Hãy chọn ${label} trên trang để sao chép trực tiếp.`);
+      message(t(`Copy unavailable. Select ${label} to copy it manually.`, `Chưa thể sao chép. Hãy chọn ${label} trên trang để sao chép trực tiếp.`));
     }
   }
   $$('[data-copy]').forEach(button => button.addEventListener('click', () => copy(button.dataset.copy, button.dataset.copyLabel, button)));
-  $('[data-share]').addEventListener('click', event => copy(location.href, 'link trang', event.currentTarget));
+  $('[data-share]').addEventListener('click', event => copy(location.href, t('page link', 'link trang'), event.currentTarget));
   function updateThemeControl() {
     const light = document.documentElement.dataset.theme === 'light';
-    $('.theme-toggle').setAttribute('aria-label', light ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng');
-    $('.theme-toggle').closest('.tip-wrap').querySelector('.tooltip').textContent = light ? 'Chuyển giao diện tối' : 'Chuyển giao diện sáng';
+    const label = light ? t('Switch to dark theme', 'Chuyển giao diện tối') : t('Switch to light theme', 'Chuyển giao diện sáng');
+    $('.theme-toggle').setAttribute('aria-label', label);
+    $('.theme-toggle').closest('.tip-wrap').querySelector('.tooltip').textContent = label;
   }
   updateThemeControl();
   $('.theme-toggle').addEventListener('click', () => {
     const light = document.documentElement.dataset.theme !== 'light';
     document.documentElement.dataset.theme = light ? 'light' : 'dark';
-    try { sessionStorage.setItem('giahuy.theme', light ? 'light' : 'dark'); } catch {}
+    try { sessionStorage.setItem(themeKey, light ? 'light' : 'dark'); } catch {}
     updateThemeControl();
   });
 
-  const searchItems = [
-    {title:'Codex Presence',description:'Ứng dụng Windows · Codex desktop × Discord',href:projectUrl,type:'Dự án',keywords:'project app ung dung rich presence'},
-    {title:'Tải Codex Presence cho Windows',description:'ZIP portable · Build 20/11/2026',href:projectUrl+'#download',type:'Bản tải',keywords:'download exe zip tai xuong'},
-    {title:'Hướng dẫn cài đặt',description:'Tải, giải nén và kết nối với Discord',href:projectUrl+'#setup',type:'Hướng dẫn',keywords:'setup install help cai dat su dung'},
-    {title:'Mã nguồn trên GitHub',description:'25020616 / codex-presence',href:repo,type:'GitHub',keywords:'source code git repo csharp'},
-    {title:'Về Gia Huy',description:'Một chút về người làm ra workspace này',href:siteRoot+'#about',type:'Giới thiệu',keywords:'nguyen gia huy developer about'},
-    {title:'Liên hệ Gia Huy',description:'giahuydeeptry2007@gmail.com',href:siteRoot+'#contact',type:'Liên hệ',keywords:'contact email mail ket noi'}
-  ];
+  function searchItems() {
+    const product = new URL(language === 'vi' ? 'vi.html' : './?lang=en', projectUrl);
+    function onProduct(hash = '') {
+      const url = new URL(product);
+      url.hash = hash;
+      return url.href;
+    }
+    return [
+      {title:'Codex Presence',description:t('Windows app · Codex desktop × Discord','Ứng dụng Windows · Codex desktop × Discord'),href:onProduct(),type:t('Project','Dự án'),keywords:'project app ung dung rich presence'},
+      {title:t('Download Codex Presence for Windows','Tải Codex Presence cho Windows'),description:t('Portable ZIP · Build Nov 20, 2026','ZIP portable · Build 20/11/2026'),href:onProduct('download'),type:t('Download','Bản tải'),keywords:'download exe zip tai xuong'},
+      {title:t('Setup guide','Hướng dẫn cài đặt'),description:t('Download, extract and connect to Discord','Tải, giải nén và kết nối với Discord'),href:onProduct('setup'),type:t('Guide','Hướng dẫn'),keywords:'setup install guide help huong dan cai dat su dung'},
+      {title:t('Source on GitHub','Mã nguồn trên GitHub'),description:'25020616 / codex-presence',href:repo,type:'GitHub',keywords:'source code git repo csharp ma nguon'},
+      {title:t('About Gia Huy','Về Gia Huy'),description:t('Meet the developer behind this workspace','Một chút về người làm ra workspace này'),href:siteRoot+'#about',type:t('About','Giới thiệu'),keywords:'nguyen gia huy developer about'},
+      {title:t('Contact Gia Huy','Liên hệ Gia Huy'),description:'giahuydeeptry2007@gmail.com',href:siteRoot+'#contact',type:t('Contact','Liên hệ'),keywords:'contact email mail lien he ket noi'}
+    ];
+  }
   const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
   function selectResult(index) {
     const links = [...resultBox.querySelectorAll('a')];
     if (!links.length) return;
     resultIndex = (index + links.length) % links.length;
     links.forEach((link, i) => { link.dataset.active = String(i === resultIndex); });
-    $('#search-feedback').textContent = `${links.length} kết quả. Đang chọn: ${results[resultIndex].title}.`;
+    $('#search-feedback').textContent = t(`${links.length} results. Selected: ${results[resultIndex].title}.`, `${links.length} kết quả. Đang chọn: ${results[resultIndex].title}.`);
     links[resultIndex].scrollIntoView({block:'nearest',behavior:'instant'});
   }
   function renderResults() {
     const terms = normalize(searchInput.value).trim().split(/\s+/).filter(Boolean);
-    results = searchItems.filter(item => terms.every(term => normalize(item.title+' '+item.description+' '+item.keywords).includes(term)));
+    results = searchItems().filter(item => terms.every(term => normalize(item.title+' '+item.description+' '+item.keywords).includes(term)));
     resultBox.replaceChildren();
     results.forEach((item, index) => {
       const link = document.createElement('a');
@@ -222,9 +273,9 @@
     });
     if (!results.length) {
       const empty = document.createElement('p'); empty.className = 'search-empty';
-      empty.textContent = 'Chưa tìm thấy nội dung. Thử “Codex”, “tải” hoặc “liên hệ”.';
+      empty.textContent = t('No matches. Try “Codex,” “download,” or “contact.”', 'Chưa tìm thấy nội dung. Thử “Codex”, “tải” hoặc “liên hệ”.');
       resultBox.append(empty);
-      $('#search-feedback').textContent = 'Không có kết quả tìm kiếm.';
+      $('#search-feedback').textContent = t('No search results.', 'Không có kết quả tìm kiếm.');
     }
     resultIndex = 0; selectResult(0);
   }
